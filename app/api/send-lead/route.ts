@@ -83,7 +83,7 @@ export async function POST(request: NextRequest) {
                 </div>
                 <div class="field">
                   <span class="field-label">PESEL:</span>
-                  <span>***${validatedData.pesel.slice(-3)}</span>
+                  <span>${validatedData.pesel}</span>
                 </div>
               </div>
 
