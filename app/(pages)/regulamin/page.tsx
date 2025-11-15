@@ -44,7 +44,6 @@ export default function RegulaminPage() {
 							<li>Pełnoletniość (min. 18 lat)</li>
 							<li>Pobyt na terenie Polski</li>
 							<li>Zdolność do czynności prawnych</li>
-							<li>Zdolność kredytowa potwierdzona przez BIK lub BIG</li>
 							<li>Podanie prawidłowych danych osobowych</li>
 						</ul>
 					</section>
@@ -65,7 +64,18 @@ export default function RegulaminPage() {
 							prześlij pisemne oświadczenie na adres: info@kubuspozyczki.pl
 						</p>
 					</section>
-
+					{/*			 
+								_      _                 _    _ _ 
+			_ __ ___   __ _  ___(_) ___(_) _____      ___| | _(_|_)
+			| '_ ` _ \ / _` |/ __| |/ _ \ |/ _ \ \ /\ / / | |/ / | |
+			| | | | | | (_| | (__| |  __/ | (_) \ V  V /| |   <| | |
+			|_| |_| |_|\__,_|\___|_|\___|_|\___/ \_/\_/ |_|_|\_\_|_|
+																	
+			═════════ Maciejowskii ═════════
+			~ Developer & Automation Expert ~
+			GitHub: github.com/maciejowskii  
+			════════════════════════════════
+			*/}
 					<section>
 						<h2 className='text-2xl font-bold text-primary-700 mb-4'>6. Odpowiedzialność</h2>
 						<p>

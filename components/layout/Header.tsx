@@ -44,10 +44,9 @@ export function Header() {
 	const [isOpen, setIsOpen] = useState(false)
 
 	const links = [
-		{ href: '/o-nas', label: 'O nas' },
 		{ href: '/jak-to-dziala', label: 'Jak to działa' },
 		{ href: '/kalkulator', label: 'Kalkulator' },
-		{ href: '/oferta', label: 'Oferta' },
+		{ href: '/wniosek', label: 'Złóż Wniosek' },
 		{ href: '/faq', label: 'FAQ' },
 		{ href: '/kontakt', label: 'Kontakt' },
 	]

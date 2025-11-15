@@ -3,7 +3,9 @@ import type { Metadata } from 'next'
 import { Inter, Poppins } from 'next/font/google'
 import './globals.css'
 import { Header } from '@/components/layout/Header'
+import { HeaderAdvanced } from '@/components/layout/HeaderAdvanced'
 import { Footer } from '@/components/layout/Footer'
+import { CookieBanner } from '@/components/CookieBanner'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' })
 const poppins = Poppins({
@@ -22,8 +24,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 	return (
 		<html lang='pl'>
 			<body className={`${inter.variable} ${poppins.variable} font-sans bg-neutral-50 text-neutral-900`}>
-				<Header />
+				<HeaderAdvanced />
 				<main className='min-h-screen'>{children}</main>
+				<CookieBanner />
 				<Footer />
 			</body>
 		</html>

@@ -4,15 +4,14 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { loanApplicationSchema, LoanApplicationType } from '@/lib/validations'
-import ReCAPTCHA from 'react-google-recaptcha'
 import { motion, AnimatePresence } from 'framer-motion'
 import { CheckCircle, AlertCircle, Loader } from 'lucide-react'
 
 export function LoanApplicationFormAdvanced() {
 	const [isSubmitting, setIsSubmitting] = useState(false)
 	const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
-	const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null)
 	const [currentStep, setCurrentStep] = useState(0)
+	const [completedSteps, setCompletedSteps] = useState<number[]>([]) // Nowy state
 
 	const {
 		register,
@@ -20,8 +19,10 @@ export function LoanApplicationFormAdvanced() {
 		formState: { errors },
 		reset,
 		watch,
+		trigger,
 	} = useForm<LoanApplicationType>({
 		resolver: zodResolver(loanApplicationSchema),
+		mode: 'onChange',
 	})
 
 	const steps = [
@@ -31,23 +32,47 @@ export function LoanApplicationFormAdvanced() {
 		{ title: 'Zgody', fields: ['agreeTerms', 'agreePrivacy', 'agreeMarketing'] },
 	]
 
-	const onSubmit = async (data: LoanApplicationType) => {
-		if (!recaptchaToken) return
+	const handleNextStep = async () => {
+		const fieldsToValidate = steps[currentStep].fields as Array<keyof LoanApplicationType>
+		const isValid = await trigger(fieldsToValidate)
 
+		if (isValid) {
+			// Oznacz obecny krok jako ukończony
+			if (!completedSteps.includes(currentStep)) {
+				setCompletedSteps([...completedSteps, currentStep])
+			}
+			setCurrentStep(Math.min(steps.length - 1, currentStep + 1))
+		}
+	}
+
+	// Funkcja do przechodzenia do określonego kroku (z walidacją)
+	const handleStepClick = async (stepIndex: number) => {
+		// Nie pozwól przejść do przyszłych kroków, które nie zostały ukończone
+		if (stepIndex > currentStep && !completedSteps.includes(stepIndex - 1)) {
+			return // Zablokuj przejście
+		}
+
+		// Pozwól tylko wracać lub iść do ukończonych kroków
+		if (stepIndex <= currentStep || completedSteps.includes(stepIndex - 1)) {
+			setCurrentStep(stepIndex)
+		}
+	}
+
+	const onSubmit = async (data: LoanApplicationType) => {
 		setIsSubmitting(true)
 
 		try {
 			const response = await fetch('/api/send-lead', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ ...data, recaptchaToken }),
+				body: JSON.stringify(data),
 			})
 
 			if (response.ok) {
 				setSubmitStatus('success')
 				reset()
-				setRecaptchaToken(null)
 				setCurrentStep(0)
+				setCompletedSteps([]) // Reset ukończonych kroków
 			} else {
 				setSubmitStatus('error')
 			}
@@ -76,7 +101,6 @@ export function LoanApplicationFormAdvanced() {
 						</div>
 					</motion.div>
 				)}
-
 				{submitStatus === 'error' && (
 					<motion.div
 						initial={{ opacity: 0, y: -10 }}
@@ -99,23 +123,25 @@ export function LoanApplicationFormAdvanced() {
 					<motion.div key={i} className='flex items-center flex-1'>
 						<motion.button
 							type='button'
-							onClick={() => setCurrentStep(i)}
-							disabled={isSubmitting}
-							whileHover={{ scale: 1.1 }}
+							onClick={() => handleStepClick(i)}
+							disabled={isSubmitting || (i > currentStep && !completedSteps.includes(i - 1))}
+							whileHover={i <= currentStep || completedSteps.includes(i - 1) ? { scale: 1.1 } : {}}
 							className={`relative w-10 h-10 rounded-full font-bold transition-all duration-300 ${
 								i <= currentStep
 									? 'bg-gradient-to-r from-primary-700 to-accent-600 text-white shadow-lg'
-									: 'bg-neutral-200 text-neutral-600'
+									: completedSteps.includes(i - 1)
+									? 'bg-gradient-to-r from-primary-700 to-accent-600 text-white shadow-lg'
+									: 'bg-neutral-200 text-neutral-600 cursor-not-allowed opacity-50'
 							}`}
 						>
 							{i + 1}
-							{i < currentStep && <span className='ml-2'>✓</span>}
+							{completedSteps.includes(i) && i < currentStep && <span className='ml-2'>✓</span>}
 						</motion.button>
 
 						{i < steps.length - 1 && (
 							<div
 								className={`flex-1 h-1 mx-2 rounded transition-all duration-300 ${
-									i < currentStep ? 'bg-gradient-to-r from-primary-700 to-accent-600' : 'bg-neutral-200'
+									completedSteps.includes(i) ? 'bg-gradient-to-r from-primary-700 to-accent-600' : 'bg-neutral-200'
 								}`}
 							/>
 						)}
@@ -231,7 +257,7 @@ export function LoanApplicationFormAdvanced() {
 								<div>
 									<label className='block text-sm font-semibold text-neutral-900 mb-3'>
 										Kwota pożyczki:
-										<span className='text-primary-700 font-bold ml-2'>{watch('amount') || '50 000'} PLN</span>
+										<span className='text-primary-700 font-bold ml-2'>{watch('amount') || '50000'} PLN</span>
 									</label>
 									<input
 										type='range'
@@ -250,7 +276,7 @@ export function LoanApplicationFormAdvanced() {
 
 								<div className='pt-4'>
 									<label className='block text-sm font-semibold text-neutral-900 mb-3'>
-										<span className='text-primary-700 font-bold ml-2'>{watch('period') || '24'} miesięcy</span>
+										Okres spłaty:
 										<span className='text-primary-700 font-bold ml-2'>{watch('period') || '24'} miesięcy</span>
 									</label>
 									<input
@@ -281,10 +307,11 @@ export function LoanApplicationFormAdvanced() {
 										disabled={isSubmitting}
 									>
 										<option value=''>Wybierz status</option>
-										<option value='employed'>👔 Pracownik najemny</option>
-										<option value='self-employed'>🏢 Pracownik na własny rachunek</option>
-										<option value='retired'>👴 Emeryt/Rencista</option>
-										<option value='other'>❓ Inne</option>
+										<option value='self-employed'>Własna działalność gospodarcza</option>
+										<option value='employed'>Praca na etacie</option>
+										<option value='retired'>Alimenty</option>
+										<option value='other'>Inne</option>
+										<option value='work-abroad'>Praca za granicą</option>
 									</select>
 									{errors.employment && (
 										<motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className='text-red-600 text-xs mt-1'>
@@ -294,7 +321,7 @@ export function LoanApplicationFormAdvanced() {
 								</div>
 
 								<div>
-									<label className='block text-sm font-semibold text-neutral-900 mb-2'>Miesięczny dochód netto *</label>
+									<label className='block text-sm font-semibold text-neutral-900 mb-2'>Twój miesięczny dochód *</label>
 									<input
 										type='number'
 										{...register('income', { valueAsNumber: true })}
@@ -331,6 +358,11 @@ export function LoanApplicationFormAdvanced() {
 											*
 										</span>
 									</label>
+									{errors.agreeTerms && (
+										<motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className='text-red-600 text-xs mt-1'>
+											{errors.agreeTerms.message}
+										</motion.p>
+									)}
 
 									<label className='flex items-start gap-3 cursor-pointer group'>
 										<input
@@ -347,6 +379,11 @@ export function LoanApplicationFormAdvanced() {
 											*
 										</span>
 									</label>
+									{errors.agreePrivacy && (
+										<motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className='text-red-600 text-xs mt-1'>
+											{errors.agreePrivacy.message}
+										</motion.p>
+									)}
 
 									<label className='flex items-start gap-3 cursor-pointer group'>
 										<input
@@ -360,15 +397,24 @@ export function LoanApplicationFormAdvanced() {
 										</span>
 									</label>
 								</div>
-
-								<div className='pt-4 flex justify-center'>
-									<ReCAPTCHA sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!} onChange={setRecaptchaToken} />
-								</div>
 							</>
 						)}
 					</motion.div>
 				</AnimatePresence>
 			</div>
+
+			{/*          
+                                _      _                 _    _ _ 
+            _ __ ___   __ _  ___(_) ___(_) _____      ___| | _(_|_)
+            | '_ ` _ \ / _` |/ __| |/ _ \ |/ _ \ \ /\ / / | |/ / | |
+            | | | | | | (_| | (__| |  __/ | (_) \ V  V /| |   <| | |
+            |_| |_| |_|\__,_|\___|_|\___|_|\___/ \_/\_/ |_|_|\_\_|_|
+                                                                    
+            ═════════ Maciejowskii ═════════
+            ~ Developer & Automation Expert ~
+            GitHub: github.com/maciejowskii  
+            ════════════════════════════════
+            */}
 
 			{/* Navigation Buttons */}
 			<div className='flex justify-between gap-4 pt-8 border-t-2 border-neutral-200'>
@@ -386,7 +432,7 @@ export function LoanApplicationFormAdvanced() {
 				{currentStep < steps.length - 1 ? (
 					<motion.button
 						type='button'
-						onClick={() => setCurrentStep(Math.min(steps.length - 1, currentStep + 1))}
+						onClick={handleNextStep}
 						disabled={isSubmitting}
 						whileHover={{ scale: 1.05 }}
 						whileTap={{ scale: 0.95 }}
@@ -397,7 +443,7 @@ export function LoanApplicationFormAdvanced() {
 				) : (
 					<motion.button
 						type='submit'
-						disabled={isSubmitting || !recaptchaToken}
+						disabled={isSubmitting}
 						whileHover={{ scale: 1.05, boxShadow: '0 20px 40px rgba(0, 102, 204, 0.4)' }}
 						whileTap={{ scale: 0.95 }}
 						className='ml-auto px-8 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white font-bold rounded-lg hover:shadow-2xl disabled:opacity-50 flex items-center gap-2 transition'

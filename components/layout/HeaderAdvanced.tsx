@@ -18,10 +18,9 @@ export function HeaderAdvanced() {
 	}, [])
 
 	const links = [
-		{ href: '/o-nas', label: 'O nas' },
 		{ href: '/jak-to-dziala', label: 'Jak to działa' },
 		{ href: '/kalkulator', label: 'Kalkulator' },
-		{ href: '/oferta', label: 'Oferta' },
+		{ href: '/wniosek', label: 'Złóż Wniosek' },
 		{ href: '/faq', label: 'FAQ' },
 		{ href: '/kontakt', label: 'Kontakt' },
 	]
@@ -44,7 +43,7 @@ export function HeaderAdvanced() {
 								transition={{ duration: 20, repeat: Infinity }}
 								className='w-10 h-10 bg-gradient-to-br from-primary-700 to-accent-600 rounded-lg flex items-center justify-center shadow-lg'
 							>
-								<span className='text-white font-bold text-lg'>MP</span>
+								<span className='text-white font-bold text-lg'>KP</span>
 							</motion.div>
 							<span className='text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary-700 to-accent-600 hidden sm:inline group-hover:scale-105 transition-transform'>
 								KubuśPożyczki
