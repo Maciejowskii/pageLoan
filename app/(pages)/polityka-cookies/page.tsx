@@ -25,7 +25,7 @@ export default function PolitykaCookies(): JSX.Element {
 							<h2 className='text-2xl font-bold text-neutral-900 mt-8 mb-4'>2. Administrator</h2>
 							<p>
 								Administratorem danych osobowych jest <strong>KubuśPożyczki</strong>, z siedzibą w Policach, adres: ul.
-								Targowa 6 lok. 5, 72-010 Police, NIP: 8513315629, e-mail: wolertjakub455@gmail.com
+								Targowa 6 lok. 5, 72-010 Police, NIP: 8513315629, e-mail: biuro@kubuspozyczki.pl
 							</p>
 						</section>
 
@@ -134,7 +134,7 @@ export default function PolitykaCookies(): JSX.Element {
 							<h2 className='text-2xl font-bold text-neutral-900 mt-8 mb-4'>10. Kontakt</h2>
 							<p>
 								W przypadku pytań dotyczących Polityki Cookies prosimy o kontakt: <br />
-								<strong>E-mail:</strong> wolertjakub455@gmail.com <br />
+								<strong>E-mail:</strong> biuro@kubuspozyczki.pl  <br />
 								<strong>Adres:</strong> ul. Targowa 6 lok. 5, 72-010 Police
 							</p>
 						</section>

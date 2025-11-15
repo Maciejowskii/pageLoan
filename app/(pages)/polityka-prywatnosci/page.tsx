@@ -78,7 +78,7 @@ export default function PolitykaPrywatosciPage() {
 
 					<div className='bg-primary-50 p-4 rounded-lg border-l-4 border-primary-700 mt-8'>
 						<p className='text-sm'>
-							<strong>Pytania dotyczące prywatności?</strong> Skontaktuj się z nami: wolertjakub455@gmail.com
+							<strong>Pytania dotyczące prywatności?</strong> Skontaktuj się z nami: biuro@kubuspozyczki.pl 
 						</p>
 					</div>
 				</div>
