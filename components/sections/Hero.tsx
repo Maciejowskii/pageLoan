@@ -16,6 +16,7 @@ export function HeroWniosek() {
 		},
 	}
 
+	// Poprawione itemVariants - usuń explicit ease
 	const itemVariants = {
 		hidden: { opacity: 0, y: 30 },
 		visible: {
@@ -23,11 +24,13 @@ export function HeroWniosek() {
 			y: 0,
 			transition: {
 				duration: 0.6,
-				ease: [0.6, 0.05, 0.01, 0.9], // Poprawione: tablica zamiast stringa
+				ease: 'easeOut', // Użyj predefiniowanego easingu zamiast tablicy
 			},
 		},
 	}
+
 	const MotionLink = motion(Link)
+
 	return (
 		<section className='relative min-h-[600px] overflow-hidden bg-gradient-to-br from-primary-50 via-white to-accent-50 py-16'>
 			{/* Animated background elements */}
