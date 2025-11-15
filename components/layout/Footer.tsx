@@ -58,7 +58,7 @@ export function Footer() {
 					{/* Contact */}
 					<div>
 						<h4 className='text-white font-semibold mb-4'>Kontakt</h4>
-						<p className='text-sm mb-2'>Email: wolertjakub455@gmail.com</p>
+						<p className='text-sm mb-2'>Email: biuro@kubuspozyczki.pl </p>
 						<p className='text-sm mb-2'>Telefon: +48 535 645 322</p>
 						<p className='text-sm'>Dni robocze: 8-22</p>
 					</div>

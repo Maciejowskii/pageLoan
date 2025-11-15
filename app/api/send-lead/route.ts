@@ -4,18 +4,18 @@ import { sendEmail } from '@/lib/email'
 
 // Honeypot protection
 type SpamCheckData = {
-  website?: string
-  submissionTime?: number
+	website?: string
+	submissionTime?: number
 }
 
 const isSpam = (data: SpamCheckData) => {
-  // Sprawdzenie honeypot field (pole ukryte dla botów)
-  if (data.website) return true
+	// Sprawdzenie honeypot field (pole ukryte dla botów)
+	if (data.website) return true
 
-  // Sprawdzenie minimum czasu wypełnienia (< 2 sekundy = bot)
-  if (typeof data.submissionTime === 'number' && data.submissionTime < 2000) return true
+	// Sprawdzenie minimum czasu wypełnienia (< 2 sekundy = bot)
+	if (typeof data.submissionTime === 'number' && data.submissionTime < 2000) return true
 
-  return false
+	return false
 }
 
 export async function POST(request: NextRequest) {
@@ -32,22 +32,13 @@ export async function POST(request: NextRequest) {
 			return NextResponse.json({ error: 'Invalid submission' }, { status: 400 })
 		}
 
-		// Walidacja reCAPTCHA
-		const recaptchaResponse = await fetch('https://www.google.com/recaptcha/api/siteverify', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-			body: `secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${body.recaptchaToken}`,
-		})
+		// ❌ USUNIĘTE: Walidacja reCAPTCHA
+		// const recaptchaResponse = await fetch(...)
+		// const recaptchaData = await recaptchaResponse.json()
+		// if (!recaptchaData.success || recaptchaData.score < 0.5) { ... }
 
-		const recaptchaData = await recaptchaResponse.json()
-
-		if (!recaptchaData.success || recaptchaData.score < 0.5) {
-			return NextResponse.json({ error: 'reCAPTCHA verification failed' }, { status: 400 })
-		}
-
-		// Walidacja danych (Zod)
-		const { recaptchaToken, ...formData } = body
-		const validatedData = loanApplicationSchema.parse(formData)
+		// Walidacja danych (Zod) - bez usuwania recaptchaToken
+		const validatedData = loanApplicationSchema.parse(body)
 
 		// HTML email template
 		const htmlContent = `
@@ -134,7 +125,7 @@ export async function POST(request: NextRequest) {
               </div>
             </div>
             <div class="footer">
-              <p>© ${new Date().getFullYear()} ModnaPozyrzka - Wygenerowano automatycznie</p>
+              <p>© ${new Date().getFullYear()} KubusPożyczki - Wygenerowano automatycznie</p>
             </div>
           </div>
         </body>
@@ -186,7 +177,7 @@ export async function POST(request: NextRequest) {
               <p style="color: #666; font-size: 12px;">
                 Nie odpowiadaj na ten email. Jeśli masz pytania, odwiedź naszą stronę <a href="${
 									process.env.NEXT_PUBLIC_SITE_URL
-								}">ModnaPozyrzka.pl</a>
+								}">KubusPożyczki.pl</a>
               </p>
             </div>
           </div>
@@ -196,7 +187,7 @@ export async function POST(request: NextRequest) {
 
 		await sendEmail({
 			to: validatedData.email,
-			subject: 'Potwierdzenie wniosku - ModnaPozyrzka',
+			subject: 'Potwierdzenie wniosku - KubusPożyczki',
 			html: confirmationEmail,
 		})
 
