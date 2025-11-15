@@ -52,14 +52,16 @@ export function HeroWniosek() {
 
 			<div className='relative section-container'>
 				<motion.div variants={containerVariants} initial='hidden' animate='visible' className='text-center space-y-8'>
-					{/* Main heading */}
 					<motion.div variants={itemVariants} className='space-y-4'>
 						<motion.div
 							animate={{ scale: [1, 1.05, 1] }}
-							transition={{ duration: 3, repeat: Infinity }}
-							className='inline-block bg-gradient-to-r from-primary-100 to-accent-100 text-transparent bg-clip-text px-6 py-2 rounded-full border border-primary-200'
+							transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+							className='inline-block px-8 py-3 rounded-full border-2 border-primary-400 bg-gradient-to-r from-primary-500 to-accent-500 shadow-2xl'
 						>
-							⚡ Szybka finansowanie 24/7
+							<span className='text-white font-bold text-lg flex items-center gap-2'>
+								<span className='text-2xl'>⚡</span>
+								Szybkie finansowanie 24/7
+							</span>
 						</motion.div>
 
 						<h1 className='text-5xl md:text-7xl font-bold text-neutral-900 leading-tight'>
