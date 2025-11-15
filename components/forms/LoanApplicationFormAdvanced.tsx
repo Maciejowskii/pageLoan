@@ -330,11 +330,11 @@ export function LoanApplicationFormAdvanced() {
 										disabled={isSubmitting}
 									>
 										<option value=''>Wybierz status</option>
-										<option value='Własna działalność gospodarcza'>Własna działalność gospodarcza</option>
-										<option value='Praca na etacie'>Praca na etacie</option>
-										<option value='Alimenty'>Alimenty</option>
-										<option value='Inne'>Inne</option>
-										<option value='Praca za granicą'>Praca za granicą</option>
+										<option value='self-employed'>Własna działalność gospodarcza</option>
+										<option value='employed'>Praca na etacie</option>
+										<option value='retired'>Alimenty</option>
+										<option value='other'>Inne</option>
+										<option value='work-abroad'>Praca za granicą</option>
 									</select>
 									{errors.employment && (
 										<motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className='text-red-600 text-xs mt-1'>

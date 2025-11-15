@@ -18,6 +18,15 @@ const isSpam = (data: SpamCheckData) => {
 	return false
 }
 
+// Mapowanie angielskich wartości na polskie nazwy
+const employmentLabels: Record<string, string> = {
+	'self-employed': 'Własna działalność gospodarcza',
+	employed: 'Praca na etacie',
+	retired: 'Alimenty',
+	other: 'Inne',
+	'work-abroad': 'Praca za granicą',
+}
+
 export async function POST(request: NextRequest) {
 	// CORS dla twojej domeny
 	if (request.method === 'OPTIONS') {
@@ -32,13 +41,11 @@ export async function POST(request: NextRequest) {
 			return NextResponse.json({ error: 'Invalid submission' }, { status: 400 })
 		}
 
-		// ❌ USUNIĘTE: Walidacja reCAPTCHA
-		// const recaptchaResponse = await fetch(...)
-		// const recaptchaData = await recaptchaResponse.json()
-		// if (!recaptchaData.success || recaptchaData.score < 0.5) { ... }
-
-		// Walidacja danych (Zod) - bez usuwania recaptchaToken
+		// Walidacja danych (Zod)
 		const validatedData = loanApplicationSchema.parse(body)
+
+		// Pobierz polską nazwę zatrudnienia
+		const employmentLabel = employmentLabels[validatedData.employment] || validatedData.employment
 
 		// HTML email template
 		const htmlContent = `
@@ -102,30 +109,34 @@ export async function POST(request: NextRequest) {
               <div class="section">
                 <div class="section-title">INFORMACJE ZAWODOWE</div>
                 <div class="field">
-                  <span class="field-label">Status:</span>
-                  <span>${validatedData.employment}</span>
+                  <span class="field-label">Status zatrudnienia:</span>
+                  <span>${employmentLabel}</span>
                 </div>
                 <div class="field">
-                  <span class="field-label">Dochód:</span>
+                  <span class="field-label">Miesięczny dochód:</span>
                   <span>${validatedData.income.toLocaleString('pl-PL')} PLN</span>
                 </div>
               </div>
 
               <div class="section">
-                <div class="section-title">MARKETING</div>
+                <div class="section-title">ZGODY MARKETINGOWE</div>
                 <div class="field">
                   <span class="field-label">Newsletter:</span>
-                  <span>${validatedData.agreeMarketing ? 'Tak' : 'Nie'}</span>
+                  <span>${validatedData.agreeMarketing ? '✅ Tak' : '❌ Nie'}</span>
                 </div>
               </div>
 
               <div style="margin-top: 20px; padding: 15px; background-color: white; border-radius: 4px;">
                 <p><strong>Czas wysłania:</strong> ${new Date().toLocaleString('pl-PL')}</p>
-                <p><strong>IP:</strong> ${request.headers.get('x-forwarded-for') || 'unknown'}</p>
+                <p><strong>IP użytkownika:</strong> ${
+									request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown'
+								}</p>
+                <p><strong>User Agent:</strong> ${request.headers.get('user-agent') || 'unknown'}</p>
               </div>
             </div>
             <div class="footer">
-              <p>© ${new Date().getFullYear()} KubusPożyczki - Wygenerowano automatycznie</p>
+              <p>© ${new Date().getFullYear()} KubusPożyczki.pl - Email wygenerowany automatycznie</p>
+              <p style="margin-top: 5px; font-size: 10px;">Ten email został wysłany z systemu zarządzania wnioskami kredytowymi</p>
             </div>
           </div>
         </body>
@@ -135,15 +146,18 @@ export async function POST(request: NextRequest) {
 		// Wyślij email na Twoją skrzynkę
 		const adminResult = await sendEmail({
 			to: process.env.ADMIN_EMAIL!,
-			subject: `[NOWY WNIOSEK] ${validatedData.firstName} ${validatedData.lastName} - ${validatedData.amount} PLN`,
+			subject: `[NOWY WNIOSEK] ${validatedData.firstName} ${
+				validatedData.lastName
+			} - ${validatedData.amount.toLocaleString('pl-PL')} PLN`,
 			html: htmlContent,
 		})
 
 		if (!adminResult.success) {
+			console.error('Failed to send admin email:', adminResult.error)
 			return NextResponse.json({ error: 'Failed to send email' }, { status: 500 })
 		}
 
-		// Opcjonalnie: Wyślij potwierdzenie do użytkownika
+		// Wyślij potwierdzenie do użytkownika
 		const confirmationEmail = `
       <!DOCTYPE html>
       <html>
@@ -152,32 +166,45 @@ export async function POST(request: NextRequest) {
             body { font-family: Arial, sans-serif; color: #212121; }
             .container { max-width: 600px; margin: 0 auto; padding: 20px; }
             .header { background-color: #003366; color: white; padding: 20px; border-radius: 8px; }
-            .content { padding: 20px; line-height: 1.6; }
+            .content { padding: 20px; line-height: 1.6; background-color: #f9f9f9; }
+            .highlight { background-color: #e3f2fd; padding: 15px; border-left: 4px solid #003366; margin: 20px 0; }
           </style>
         </head>
         <body>
           <div class="container">
             <div class="header">
-              <h2>Dziękujemy za złożenie wniosku!</h2>
+              <h2>✅ Dziękujemy za złożenie wniosku!</h2>
             </div>
             <div class="content">
-              <p>Cześć ${validatedData.firstName},</p>
-              <p>Twój wniosek o pożyczkę w wysokości <strong>${validatedData.amount.toLocaleString(
-								'pl-PL'
-							)} PLN</strong> został pomyślnie przesłany.</p>
+              <p>Dzień dobry ${validatedData.firstName},</p>
               
-              <p>Wkrótce skontaktujemy się z Tobą na numer telefonu <strong>${
-								validatedData.phone
-							}</strong> lub email <strong>${validatedData.email}</strong>.</p>
+              <div class="highlight">
+                <p style="margin: 0;"><strong>Twój wniosek został pomyślnie przesłany!</strong></p>
+                <p style="margin: 10px 0 0 0;">Kwota: <strong>${validatedData.amount.toLocaleString(
+									'pl-PL'
+								)} PLN</strong></p>
+                <p style="margin: 5px 0 0 0;">Okres: <strong>${validatedData.period} miesięcy</strong></p>
+              </div>
               
-              <p>Średni czas weryfikacji wynosi 24-48 godzin.</p>
+              <p>Nasz zespół weryfikuje Twój wniosek i wkrótce skontaktujemy się z Tobą:</p>
+              <ul>
+                <li>📧 Email: <strong>${validatedData.email}</strong></li>
+                <li>📱 Telefon: <strong>${validatedData.phone}</strong></li>
+              </ul>
+              
+              <p><strong>Średni czas weryfikacji: 24-48 godzin roboczych</strong></p>
               
               <hr style="margin: 20px 0; border: none; border-top: 1px solid #e6e6e6;">
               
               <p style="color: #666; font-size: 12px;">
-                Nie odpowiadaj na ten email. Jeśli masz pytania, odwiedź naszą stronę <a href="${
+                ⚠️ Nie odpowiadaj na ten email. W razie pytań skontaktuj się z nami poprzez stronę 
+                <a href="${
 									process.env.NEXT_PUBLIC_SITE_URL
-								}">KubusPożyczki.pl</a>
+								}/kontakt" style="color: #003366;">KubusPożyczki.pl/kontakt</a>
+              </p>
+              
+              <p style="color: #666; font-size: 12px; margin-top: 10px;">
+                Jeśli nie składałeś tego wniosku, zignoruj ten email.
               </p>
             </div>
           </div>
@@ -187,7 +214,7 @@ export async function POST(request: NextRequest) {
 
 		await sendEmail({
 			to: validatedData.email,
-			subject: 'Potwierdzenie wniosku - KubusPożyczki',
+			subject: '✅ Potwierdzenie wniosku o pożyczkę - KubusPożyczki',
 			html: confirmationEmail,
 		})
 
