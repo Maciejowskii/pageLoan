@@ -15,8 +15,8 @@ export default function PolitykaPrywatosciPage() {
 					<section>
 						<h2 className='text-2xl font-bold text-primary-700 mb-4'>1. Administrator danych</h2>
 						<p>
-							Administratorem Twoich danych osobowych jest: KubuśPożyczki Sp. z o.o., ul. Warszawska 123, 00-001
-							Warszawa, NIP: 1234567890
+							Administratorem Twoich danych osobowych jest: KubuśPożyczki Sp. z o.o., ul. Targowa 6 lok. 5, 72-010
+							Police, NIP: 8513315629
 						</p>
 					</section>
 
@@ -78,7 +78,7 @@ export default function PolitykaPrywatosciPage() {
 
 					<div className='bg-primary-50 p-4 rounded-lg border-l-4 border-primary-700 mt-8'>
 						<p className='text-sm'>
-							<strong>Pytania dotyczące prywatności?</strong> Skontaktuj się z nami: privacy@kubuspozyczki.pl
+							<strong>Pytania dotyczące prywatności?</strong> Skontaktuj się z nami: wolertjakub455@gmail.com
 						</p>
 					</div>
 				</div>

@@ -1,5 +1,6 @@
 import { Metadata } from 'next'
 import { Check } from 'lucide-react'
+import Link from 'next/link'
 
 export const metadata: Metadata = {
 	title: 'Jak to działa - KubuśPożyczki',
@@ -122,9 +123,46 @@ export default function JakToDzialaPage() {
 								<div className='w-4 h-4 bg-green-500 rounded-full'></div>
 							</div>
 							<div>
-								<p className='font-bold text-green-600'>24 godziny</p>
+								<p className='font-bold text-green-600'>30 minut</p>
 								<p className='text-sm text-neutral-600'>Pieniądze na Twoim koncie</p>
 							</div>
+						</div>
+					</div>
+				</div>
+
+				{/* CTA Section - na dole strony */}
+				<div className='bg-gradient-to-r from-primary-700 to-primary-800 rounded-2xl shadow-2xl p-8 md:p-12 text-center'>
+					<h2 className='text-3xl md:text-4xl font-bold text-white mb-4'>Gotowy, aby rozpocząć?</h2>
+					<p className='text-lg text-primary-50 mb-8 max-w-2xl mx-auto'>
+						Wypełnij wniosek w zaledwie 5 minut i otrzymaj pieniądze na koncie nawet tego samego dnia.
+					</p>
+
+					<div className='flex flex-col sm:flex-row gap-4 justify-center items-center'>
+						<Link
+							href='/wniosek'
+							className='px-8 py-4 bg-white text-primary-700 font-bold rounded-xl hover:shadow-2xl hover:scale-105 transition duration-300 text-lg'
+						>
+							Złóż wniosek teraz
+						</Link>
+
+						<Link
+							href='/kalkulator'
+							className='px-8 py-4 border-2 border-white text-white font-bold rounded-xl hover:bg-white hover:text-primary-700 transition duration-300 text-lg'
+						>
+							Sprawdź kwotę
+						</Link>
+					</div>
+
+					{/* Dodatkowe linki nawigacyjne */}
+					<div className='mt-8 pt-8 border-t border-primary-600'>
+						<p className='text-primary-100 mb-4 text-sm'>Potrzebujesz więcej informacji?</p>
+						<div className='flex flex-wrap justify-center gap-4 text-sm'>
+							<Link href='/faq' className='text-white hover:text-primary-100 underline transition'>
+								FAQ
+							</Link>
+							<Link href='/kontakt' className='text-white hover:text-primary-100 underline transition'>
+								Kontakt
+							</Link>
 						</div>
 					</div>
 				</div>

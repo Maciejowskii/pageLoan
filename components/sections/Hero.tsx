@@ -1,6 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import Link from 'next/link'
 import { ArrowRight, TrendingUp, Zap, Shield } from 'lucide-react'
 
 export function HeroWniosek() {
@@ -23,7 +24,7 @@ export function HeroWniosek() {
 			transition: { duration: 0.8, ease: 'easeOut' },
 		},
 	}
-
+	const MotionLink = motion(Link)
 	return (
 		<section className='relative min-h-[600px] overflow-hidden bg-gradient-to-br from-primary-50 via-white to-accent-50 py-16'>
 			{/* Animated background elements */}
@@ -62,7 +63,7 @@ export function HeroWniosek() {
 							Pożyczka
 							<br />
 							<span className='text-transparent bg-clip-text bg-gradient-to-r from-primary-700 via-accent-600 to-primary-600'>
-								do 150 000 PLN
+								do 150 000 PLN BEZ BIK
 							</span>
 						</h1>
 
@@ -74,27 +75,29 @@ export function HeroWniosek() {
 
 					{/* CTA Buttons */}
 					<motion.div variants={itemVariants} className='flex flex-col sm:flex-row justify-center gap-4 pt-8'>
-						<motion.button
+						<motion.a
 							whileHover={{ scale: 1.05, boxShadow: '0 20px 40px rgba(0, 102, 204, 0.4)' }}
 							whileTap={{ scale: 0.98 }}
 							className='px-8 py-4 bg-gradient-to-r from-primary-700 to-primary-800 text-white font-bold rounded-xl hover:shadow-2xl transition duration-300 flex items-center justify-center gap-2 text-lg'
+							href='/wniosek'
 						>
 							Złóż wniosek teraz <ArrowRight className='w-5 h-5' />
-						</motion.button>
+						</motion.a>
 
-						<motion.button
+						<MotionLink
+							href='/wniosek'
 							whileHover={{ scale: 1.05 }}
 							whileTap={{ scale: 0.98 }}
 							className='px-8 py-4 border-2 border-primary-700 text-primary-700 font-bold rounded-xl hover:bg-primary-50 transition duration-300 text-lg'
 						>
 							Sprawdź kwotę
-						</motion.button>
+						</MotionLink>
 					</motion.div>
 
 					{/* Features */}
 					<motion.div variants={itemVariants} className='grid grid-cols-1 md:grid-cols-3 gap-6 pt-12'>
 						{[
-							{ icon: Zap, label: '5 minut', desc: 'Szybka decyzja' },
+							{ icon: Zap, label: 'Decyzja do 5 minut', desc: 'Szybka decyzja' },
 							{ icon: TrendingUp, label: 'Do 150k', desc: 'Maksymalna kwota' },
 							{ icon: Shield, label: '100%', desc: 'Bezpieczeństwo' },
 						].map((feature, i) => (

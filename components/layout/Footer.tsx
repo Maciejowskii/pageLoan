@@ -1,4 +1,3 @@
-// components/layout/Footer.tsx
 import Link from 'next/link'
 
 export function Footer() {
@@ -16,11 +15,6 @@ export function Footer() {
 					<div>
 						<h4 className='text-white font-semibold mb-4'>Nawigacja</h4>
 						<ul className='space-y-2 text-sm'>
-							<li>
-								<Link href='/o-nas' className='hover:text-white transition'>
-									O nas
-								</Link>
-							</li>
 							<li>
 								<Link href='/jak-to-dziala' className='hover:text-white transition'>
 									Jak to działa
@@ -64,36 +58,25 @@ export function Footer() {
 					{/* Contact */}
 					<div>
 						<h4 className='text-white font-semibold mb-4'>Kontakt</h4>
-						<p className='text-sm mb-2'>Email: info@kubuspozyczki.pl</p>
-						<p className='text-sm mb-2'>Telefon: +48 123 456 789</p>
-						<p className='text-sm'>Dni robocze: 9-17</p>
+						<p className='text-sm mb-2'>Email: wolertjakub455@gmail.com</p>
+						<p className='text-sm mb-2'>Telefon: +48 535 645 322</p>
+						<p className='text-sm'>Dni robocze: 8-22</p>
 					</div>
 				</div>
 
 				<div className='border-t border-neutral-700 pt-8 flex flex-col md:flex-row justify-between items-center'>
 					<p className='text-sm text-neutral-400'>
-						© {new Date().getFullYear()} KubuśPożyczki. Wszelkie prawa zastrzeżone. Zrealizowane przez{' '}
+						{new Date().getFullYear()} KubuśPożyczki. Wszelkie prawa zastrzeżone. Zrealizowane przez
 						<a
-							href='https://quickpick.pl/'
+							href='https://digitay.pl/'
 							className='hover:underline'
 							target='_blank'
 							rel='noopener noreferrer'
 							color='green'
 						>
-							QuickPick
+							Digitay
 						</a>
 					</p>
-					<div className='flex gap-4 mt-4 md:mt-0'>
-						<a href='#' className='text-neutral-400 hover:text-white transition'>
-							Facebook
-						</a>
-						<a href='#' className='text-neutral-400 hover:text-white transition'>
-							Instagram
-						</a>
-						<a href='#' className='text-neutral-400 hover:text-white transition'>
-							LinkedIn
-						</a>
-					</div>
 				</div>
 			</div>
 		</footer>
