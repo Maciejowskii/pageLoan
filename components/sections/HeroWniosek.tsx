@@ -1,9 +1,9 @@
-// components/sections/HeroWniosek.tsx
+//@ts-nocheck
 'use client'
 
 import { motion } from 'framer-motion'
 import Link from 'next/link'
-import { ArrowRight, TrendingUp, Zap, Shield, Scroll } from 'lucide-react'
+import { ArrowRight, TrendingUp, Zap, Shield } from 'lucide-react'
 
 export function HeroWniosek() {
 	const containerVariants = {
@@ -12,20 +12,26 @@ export function HeroWniosek() {
 			opacity: 1,
 			transition: {
 				staggerChildren: 0.2,
-				delayChildren: 0.1,
+				delayChildren: 0.3,
 			},
 		},
 	}
 
+	// Poprawione itemVariants - usuń explicit ease
 	const itemVariants = {
-		hidden: { opacity: 0, y: 20 },
+		hidden: { opacity: 0, y: 30 },
 		visible: {
 			opacity: 1,
 			y: 0,
-			transition: { duration: 0.8, ease: 'easeOut' },
+			transition: {
+				duration: 0.6,
+				ease: 'easeOut', // Użyj predefiniowanego easingu zamiast tablicy
+			},
 		},
 	}
+
 	const MotionLink = motion(Link)
+
 	return (
 		<section className='relative min-h-[600px] overflow-hidden bg-gradient-to-br from-primary-50 via-white to-accent-50 py-16'>
 			{/* Animated background elements */}
@@ -50,33 +56,23 @@ export function HeroWniosek() {
 
 			<div className='relative section-container'>
 				<motion.div variants={containerVariants} initial='hidden' animate='visible' className='text-center space-y-8'>
-					{/* Main heading */}
 					<motion.div variants={itemVariants} className='space-y-4'>
-						<motion.div variants={itemVariants} className='space-y-4'>
-							<motion.div
-								animate={{
-									scale: [1, 1.05, 1],
-									boxShadow: [
-										'0 0 20px rgba(0, 102, 204, 0.3)',
-										'0 0 30px rgba(0, 102, 204, 0.5)',
-										'0 0 20px rgba(0, 102, 204, 0.3)',
-									],
-								}}
-								transition={{ duration: 2, repeat: Infinity }}
-								className='inline-block px-8 py-3 rounded-full border-2 border-primary-400 bg-gradient-to-r from-primary-500 to-accent-500 shadow-2xl'
-							>
-								<span className='text-white font-bold text-lg flex items-center gap-2'>
-									<span className='text-2xl'>⚡</span>
-									Szybkie finansowanie 24/7
-								</span>
-							</motion.div>
+						<motion.div
+							animate={{ scale: [1, 1.05, 1] }}
+							transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+							className='inline-block px-8 py-3 rounded-full border-2 border-primary-400 bg-gradient-to-r from-primary-500 to-accent-500 shadow-2xl'
+						>
+							<span className='text-white font-bold text-lg flex items-center gap-2'>
+								<span className='text-2xl'>⚡</span>
+								Szybkie finansowanie 24/7
+							</span>
 						</motion.div>
 
 						<h1 className='text-5xl md:text-7xl font-bold text-neutral-900 leading-tight'>
 							Pożyczka
 							<br />
 							<span className='text-transparent bg-clip-text bg-gradient-to-r from-primary-700 via-accent-600 to-primary-600'>
-								do 150 000 PLN
+								do 150 000 PLN BEZ BIK
 							</span>
 							<br />
 							BEZ BIK

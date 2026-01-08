@@ -11,7 +11,7 @@ export function LoanApplicationFormAdvanced() {
 	const [isSubmitting, setIsSubmitting] = useState(false)
 	const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
 	const [currentStep, setCurrentStep] = useState(0)
-	const [completedSteps, setCompletedSteps] = useState<number[]>([]) // Nowy state
+	const [completedSteps, setCompletedSteps] = useState<number[]>([])
 
 	const {
 		register,
@@ -22,7 +22,7 @@ export function LoanApplicationFormAdvanced() {
 		trigger,
 	} = useForm<LoanApplicationType>({
 		resolver: zodResolver(loanApplicationSchema),
-		mode: 'onChange',
+		mode: 'onChange', // Real-time validation
 	})
 
 	const steps = [
@@ -37,7 +37,6 @@ export function LoanApplicationFormAdvanced() {
 		const isValid = await trigger(fieldsToValidate)
 
 		if (isValid) {
-			// Oznacz obecny krok jako ukończony
 			if (!completedSteps.includes(currentStep)) {
 				setCompletedSteps([...completedSteps, currentStep])
 			}
@@ -45,14 +44,11 @@ export function LoanApplicationFormAdvanced() {
 		}
 	}
 
-	// Funkcja do przechodzenia do określonego kroku (z walidacją)
 	const handleStepClick = async (stepIndex: number) => {
-		// Nie pozwól przejść do przyszłych kroków, które nie zostały ukończone
 		if (stepIndex > currentStep && !completedSteps.includes(stepIndex - 1)) {
-			return // Zablokuj przejście
+			return
 		}
 
-		// Pozwól tylko wracać lub iść do ukończonych kroków
 		if (stepIndex <= currentStep || completedSteps.includes(stepIndex - 1)) {
 			setCurrentStep(stepIndex)
 		}
@@ -72,7 +68,7 @@ export function LoanApplicationFormAdvanced() {
 				setSubmitStatus('success')
 				reset()
 				setCurrentStep(0)
-				setCompletedSteps([]) // Reset ukończonych kroków
+				setCompletedSteps([])
 			} else {
 				setSubmitStatus('error')
 			}
@@ -233,18 +229,45 @@ export function LoanApplicationFormAdvanced() {
 									)}
 								</div>
 
+								{/* ✅ ULEPSZONE POLE PESEL */}
 								<div>
-									<label className='block text-sm font-semibold text-neutral-900 mb-2'>PESEL *</label>
+									<label className='block text-sm font-semibold text-neutral-900 mb-2'>
+										PESEL *<span className='ml-2 text-xs text-neutral-500 font-normal'>(11 cyfr)</span>
+									</label>
 									<input
 										type='text'
 										{...register('pesel')}
 										placeholder='00000000000'
-										className='input-base bg-white hover:bg-neutral-50 focus:bg-white transition w-full'
+										maxLength={11}
+										inputMode='numeric'
+										pattern='[0-9]*'
+										className={`input-base bg-white hover:bg-neutral-50 focus:bg-white transition w-full ${
+											errors.pesel ? 'border-red-500 ring-2 ring-red-200' : ''
+										}`}
 										disabled={isSubmitting}
+										onInput={e => {
+											// Tylko cyfry
+											e.currentTarget.value = e.currentTarget.value.replace(/[^0-9]/g, '')
+										}}
 									/>
 									{errors.pesel && (
-										<motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className='text-red-600 text-xs mt-1'>
+										<motion.p
+											initial={{ opacity: 0, y: -5 }}
+											animate={{ opacity: 1, y: 0 }}
+											className='text-red-600 text-xs mt-1 flex items-center gap-1'
+										>
+											<AlertCircle className='w-3 h-3' />
 											{errors.pesel.message}
+										</motion.p>
+									)}
+									{!errors.pesel && watch('pesel')?.length === 11 && (
+										<motion.p
+											initial={{ opacity: 0 }}
+											animate={{ opacity: 1 }}
+											className='text-green-600 text-xs mt-1 flex items-center gap-1'
+										>
+											<CheckCircle className='w-3 h-3' />
+											PESEL prawidłowy
 										</motion.p>
 									)}
 								</div>

@@ -25,8 +25,8 @@ export default function KontaktPage() {
 						<Mail className='w-12 h-12 text-primary-700 mb-4' />
 						<h3 className='text-xl font-bold text-neutral-900 mb-2'>Email</h3>
 						<p className='text-neutral-600 mb-4'>Wyślij nam wiadomość, odpowiemy w ciągu 30 minut</p>
-						<a href='mailto:wolertjakub455@gmail.com' className='text-primary-700 font-semibold hover:underline'>
-							wolertjakub455@gmail.com
+						<a href='mailto:biuro@kubuspozyczki.pl' className='text-primary-700 font-semibold hover:underline'>
+							biuro@kubuspozyczki.pl 
 						</a>
 					</div>
 
